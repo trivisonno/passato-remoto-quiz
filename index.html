@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passato Remoto Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .result {
+            font-weight: bold;
+        }
+        label {
+            display: block;
+            margin-top: 5px;
+        }
+        input {
+            margin-bottom: 5px;
+        }
+        .checkmark {
+            display: none;
+            color: green;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .correct + .checkmark {
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Passato Remoto Quiz</h1>
+    <div id="quiz"></div>
+    <button onclick="checkAnswers()">Submit</button>
+    <div id="result"></div>
+
+    <script>
+        const verbs = {
+            dare: ['diedi', 'desti', 'diede', 'demmo', 'deste', 'diedero'],
+            fare: ['feci', 'facesti', 'fece', 'facemmo', 'faceste', 'fecero'],
+            stare: ['stetti', 'stesti', 'stette', 'stemmo', 'steste', 'stettero'],
+            dire: ['dissi', 'dicesti', 'disse', 'dicemmo', 'diceste', 'dissero'],
+            venire: ['venni', 'venisti', 'venne', 'venimmo', 'veniste', 'vennero'],
+            avere: ['ebbi', 'avesti', 'ebbe', 'avemmo', 'aveste', 'ebbero'],
+            essere: ['fui', 'fosti', 'fu', 'fummo', 'foste', 'furono'],
+            chiudere: ['chiusi', 'chiudesti', 'chiuse', 'chiudemmo', 'chiudeste', 'chiusero'],
+            conoscere: ['conobbi', 'conoscesti', 'conobbe', 'conoscemmo', 'conosceste', 'conobbero'],
+            decidere: ['decisi', 'decidesti', 'decise', 'decidemmo', 'decideste', 'decisero'],
+            leggere: ['lessi', 'leggesti', 'lesse', 'leggemmo', 'leggeste', 'lessero'],
+            mettere: ['misi', 'mettesti', 'mise', 'mettemmo', 'metteste', 'misero'],
+            prendere: ['presi', 'prendesti', 'prese', 'prendemmo', 'prendeste', 'presero'],
+            sapere: ['seppi', 'sapesti', 'seppe', 'sapemmo', 'sapeste', 'seppero'],
+            scrivere: ['scrissi', 'scrivesti', 'scrisse', 'scrivemmo', 'scriveste', 'scrissero'],
+            spendere: ['spesi', 'spendesti', 'spese', 'spendemmo', 'spendeste', 'spesero'],
+            tenere: ['tenni', 'tenesti', 'tenne', 'tenemmo', 'teneste', 'tennero'],
+            vedere: ['vidi', 'vedesti', 'vide', 'vedemmo', 'vedeste', 'videro'],
+            vivere: ['vissi', 'vivesti', 'visse', 'vivemmo', 'viveste', 'vissero'],
+            volere: ['volli', 'volesti', 'volle', 'volemmo', 'voleste', 'vollero']
+        };
+
+        const pronouns = ['io', 'tu', 'lui/lei', 'noi', 'voi', 'loro'];
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        const quizContainer = document.getElementById('quiz');
+        const resultContainer = document.getElementById('result');
+        const shuffledVerbs = shuffle(Object.keys(verbs));
+
+        shuffledVerbs.forEach((verb, index) => {
+            const questionDiv = document.createElement('div');
+            questionDiv.classList.add('question');
+            questionDiv.innerHTML = `<h3>${index + 1}. Conjugate the verb <strong>${verb.toUpperCase()}</strong> in passato remoto:</h3>`;
+            
+            pronouns.forEach((pronoun, pronounIndex) => {
+                questionDiv.innerHTML += `
+                    <label for="${verb}-${pronounIndex}">${pronoun}</label>
+                    <input type="text" id="${verb}-${pronounIndex}" name="${verb}-${pronounIndex}" oninput="checkInput('${verb}', ${pronounIndex}, this)">
+                    <span class="checkmark">✔️</span>
+                `;
+            });
+            quizContainer.appendChild(questionDiv);
+        });
+
+        function checkInput(verb, pronounIndex, inputElement) {
+            const correctAnswer = verbs[verb][pronounIndex].toLowerCase();
+            const userAnswer = inputElement.value.trim().toLowerCase();
+            if (userAnswer === correctAnswer) {
+                inputElement.classList.add('correct');
+                const nextInput = inputElement.closest('.question').querySelectorAll('input')[pronounIndex + 1];
+                if (nextInput) {
+                    nextInput.focus();
+                } else {
+                    const nextQuestion = inputElement.closest('.question').nextElementSibling;
+                    if (nextQuestion) {
+                        nextQuestion.querySelector('input').focus();
+                    }
+                }
+            } else {
+                inputElement.classList.remove('correct');
+            }
+        }
+
+        function checkAnswers() {
+            let score = 0;
+            let total = Object.keys(verbs).length * pronouns.length;
+
+            shuffledVerbs.forEach(verb => {
+                verbs[verb].forEach((correctAnswer, pronounIndex) => {
+                    const userAnswer = document.getElementById(`${verb}-${pronounIndex}`).value.trim().toLowerCase();
+                    if (userAnswer === correctAnswer.toLowerCase()) {
+                        score++;
+                    }
+                });
+            });
+
+            resultContainer.innerHTML = `You scored ${score} out of ${total}.`;
+        }
+    </script>
+</body>
+</html>
