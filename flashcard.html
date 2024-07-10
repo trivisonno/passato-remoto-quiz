@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Italian Passato Remoto Conjugation Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .result {
+            font-weight: bold;
+        }
+        label {
+            display: block;
+            margin-top: 5px;
+        }
+        .question-container {
+            margin-bottom: 20px;
+        }
+        .pronoun-container {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .pronoun-container label {
+            margin-right: 10px;
+        }
+        input {
+            margin-bottom: 5px;
+        }
+        .checkmark, .cross {
+            display: none;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .correct + .checkmark {
+            display: inline;
+            color: green;
+        }
+        .incorrect + .cross {
+            display: inline;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Verb Conjugation Quiz</h1>
+    <div id="quiz"></div>
+    <div id="result"></div>
+
+    <script>
+        const verbs = {
+            dare: ['diedi', 'desti', 'diede', 'demmo', 'deste', 'diedero'],
+            fare: ['feci', 'facesti', 'fece', 'facemmo', 'faceste', 'fecero'],
+            stare: ['stetti', 'stesti', 'stette', 'stemmo', 'steste', 'stettero'],
+            dire: ['dissi', 'dicesti', 'disse', 'dicemmo', 'diceste', 'dissero'],
+            venire: ['venni', 'venisti', 'venne', 'venimmo', 'veniste', 'vennero'],
+            avere: ['ebbi', 'avesti', 'ebbe', 'avemmo', 'aveste', 'ebbero'],
+            essere: ['fui', 'fosti', 'fu', 'fummo', 'foste', 'furono'],
+            chiudere: ['chiusi', 'chiudesti', 'chiuse', 'chiudemmo', 'chiudeste', 'chiusero'],
+            conoscere: ['conobbi', 'conoscesti', 'conobbe', 'conoscemmo', 'conosceste', 'conobbero'],
+            decidere: ['decisi', 'decidesti', 'decise', 'decidemmo', 'decideste', 'decisero'],
+            leggere: ['lessi', 'leggesti', 'lesse', 'leggemmo', 'leggeste', 'lessero'],
+            mettere: ['misi', 'mettesti', 'mise', 'mettemmo', 'metteste', 'misero'],
+            prendere: ['presi', 'prendesti', 'prese', 'prendemmo', 'prendeste', 'presero'],
+            sapere: ['seppi', 'sapesti', 'seppe', 'sapemmo', 'sapeste', 'seppero'],
+            scrivere: ['scrissi', 'scrivesti', 'scrisse', 'scrivemmo', 'scriveste', 'scrissero'],
+            spendere: ['spesi', 'spendesti', 'spese', 'spendemmo', 'spendeste', 'spesero'],
+            tenere: ['tenni', 'tenesti', 'tenne', 'tenemmo', 'teneste', 'tennero'],
+            vedere: ['vidi', 'vedesti', 'vide', 'vedemmo', 'vedeste', 'videro'],
+            vivere: ['vissi', 'vivesti', 'visse', 'vivemmo', 'viveste', 'vissero'],
+            volere: ['volli', 'volesti', 'volle', 'volemmo', 'voleste', 'vollero']
+        };
+
+        const pronouns = ['io', 'tu', 'lui/lei', 'noi', 'voi', 'loro'];
+
+        const quizContainer = document.getElementById('quiz');
+        const resultContainer = document.getElementById('result');
+
+        function getRandomInt(max) {
+            return Math.floor(Math.random() * max);
+        }
+
+        function getRandomVerbAndPronoun() {
+            const verbKeys = Object.keys(verbs);
+            const randomVerbKey = verbKeys[getRandomInt(verbKeys.length)];
+            const randomPronounIndex = getRandomInt(pronouns.length);
+            const randomPronoun = pronouns[randomPronounIndex];
+            return { verb: randomVerbKey, pronoun: randomPronoun, pronounIndex: randomPronounIndex };
+        }
+
+        function loadNextQuestion() {
+            quizContainer.innerHTML = '';
+            const { verb, pronoun, pronounIndex } = getRandomVerbAndPronoun();
+            quizContainer.innerHTML = `
+                <div class="question-container">
+                    <h2>${verb.toUpperCase()}</h2>
+                    <div class="pronoun-container">
+                        <label for="answer"><strong>${pronoun}</strong></label>
+                        <input type="text" id="answer" name="answer" onkeydown="if (event.key === 'Enter') checkAnswer('${verb}', ${pronounIndex})">
+                        <span class="checkmark">✔️</span>
+                        <span class="cross">❌</span>
+                    </div>
+                </div>
+                <button onclick="checkAnswer('${verb}', ${pronounIndex})">Submit</button>
+            `;
+            document.getElementById('answer').focus();
+        }
+
+        function checkAnswer(verb, pronounIndex) {
+            const correctAnswer = verbs[verb][pronounIndex].toLowerCase();
+            const userAnswer = document.getElementById('answer').value.trim().toLowerCase();
+            const checkmark = document.querySelector('.checkmark');
+            const cross = document.querySelector('.cross');
+            if (userAnswer === correctAnswer) {
+                checkmark.style.display = 'inline';
+                cross.style.display = 'none';
+                setTimeout(loadNextQuestion, 1000);
+            } else {
+                cross.style.display = 'inline';
+                checkmark.style.display = 'none';
+            }
+        }
+
+        loadNextQuestion();
+    </script>
+</body>
+</html>
